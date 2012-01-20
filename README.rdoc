@@ -116,6 +116,13 @@ And it maintained our updated attribute.
   fish.best_served_with
   => "A light red wine"
 
+Oh, and yes we can query the attribute's existence/trueness just like vanilla ActiveRecord:
+
+  Fish.new.best_served_with?
+  => false
+  Fish.new(:best_served_with => 'wasabe').best_served_with?
+  => true
+
 Now let's try an animal with some typecasting -- I'll create using string values for
 the bucketed attributes since that's what a Rails form would send:
 
