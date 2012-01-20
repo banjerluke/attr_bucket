@@ -148,6 +148,22 @@ Let's make sure the attributes got cast to the proper type:
 
 That lolrus looks to be in fine shape, indeed.
 
+== attr_accessible
+
+Bucketed attributes are by default not accessible (like normal attributes) so you'll have to +attr_accessible+ them if you want to mass-assign them.
+
+For your convenience, there is an +:accessible+ option which will automatically call +attr_accessible+ on all bucketed attributes.
+
+  attr_bucket :preferences => {
+    :color, :length, :girth
+  }, :accessible => true
+
+Rails 3.1+ mass-assignment roles are supported:
+
+  attr_bucket :preferences => {
+    :color, :length, :girth
+  }, :accessible => { :as => :admin }
+
 == Caveats
 
 This whole thing's a caveat, really. If you're looking to do this, be absolutely,

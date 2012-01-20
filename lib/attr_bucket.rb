@@ -42,6 +42,7 @@ module AttrBucket
 
     return nil unless table_exists?
 
+    accessible = opts.delete(:accessible)
     opts.map do |bucket_name, attrs|
       bucket_column = self.columns_hash[bucket_name.to_s]
       unless bucket_column.type == :text
@@ -52,11 +53,11 @@ module AttrBucket
 
       if attrs.is_a?(Hash)
         attrs.map do|attr_name, attr_type|
-          _define_bucket bucket_name, attr_name, attr_type, bucket_column.class
+          _define_bucket bucket_name, attr_name, attr_type, bucket_column.class, accessible
         end
       else
         Array.wrap(attrs).each do |attr_name|
-          _define_bucket bucket_name, attr_name, :string, bucket_column.class
+          _define_bucket bucket_name, attr_name, :string, bucket_column.class, accessible
         end
       end
     end
@@ -64,7 +65,7 @@ module AttrBucket
 
   alias :i_has_a_bucket :attr_bucket
 
-  def _define_bucket(bucket_name, attr_name, attr_type, column_class)
+  def _define_bucket(bucket_name, attr_name, attr_type, column_class, accessible = false)
     self._attr_bucketed_attributes |= [attr_name.to_s]
 
     self._attr_bucket_methods.class_eval do
@@ -84,6 +85,15 @@ module AttrBucket
         send "#{bucket_name}_will_change!"
         typecasted = _explicitly_type_cast(val, attr_type, column_class)
         _get_bucket(bucket_name)[attr_name] = typecasted
+      end
+    end
+    if accessible.is_a?(Hash)
+      self.class_eval do
+        attr_accessible :"#{attr_name}", accessible
+      end
+    elsif accessible
+      self.class_eval do
+        attr_accessible :"#{attr_name}"
       end
     end
   end
