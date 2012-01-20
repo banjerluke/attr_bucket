@@ -72,6 +72,14 @@ module AttrBucket
         _get_bucket(bucket_name)[attr_name]
       end
 
+      define_method "#{attr_name}?" do
+        if value = _get_bucket(bucket_name)[attr_name]
+          !value.blank?
+        else
+          false
+        end
+      end
+
       define_method "#{attr_name}=" do |val|
         send "#{bucket_name}_will_change!"
         typecasted = _explicitly_type_cast(val, attr_type, column_class)
