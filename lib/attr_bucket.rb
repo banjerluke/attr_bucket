@@ -45,6 +45,9 @@ module AttrBucket
     accessible = opts.delete(:accessible)
     opts.map do |bucket_name, attrs|
       bucket_column = self.columns_hash[bucket_name.to_s]
+      if bucket_column.nil?
+        Rails.logger.warn "#{bucket_name} has not been definied in the database table"
+      end
       unless bucket_column.type == :text
         raise ArgumentError,
               "#{bucket_name} is of type #{bucket_column.type}, not text"
